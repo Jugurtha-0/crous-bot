@@ -1,6 +1,10 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-TOKEN = "8988887991:AAEsocx4SddEiyXkc_ORHdMUEtqdcGTp0gc"
+load_dotenv()
+
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 url = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
 
