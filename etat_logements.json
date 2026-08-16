@@ -1,0 +1,112 @@
+{
+  "1069": {
+    "id": 1069,
+    "residence": "Cité Jules Mousseron",
+    "ville": "Lille",
+    "adresse": "Rue du Chemin Vert 59300 AULNOY-LES-VALENCIENNES",
+    "type": "Chambre confort",
+    "surface": 12.5,
+    "loyer": 225.57,
+    "available": true
+  },
+  "1224": {
+    "id": 1224,
+    "residence": "BAZEILLES",
+    "ville": "Reims",
+    "adresse": "12 place de l infanterie de marine 08140 BAZEILLES",
+    "type": "T1Bis",
+    "surface": 21.0,
+    "loyer": 426.0,
+    "available": true
+  },
+  "1211": {
+    "id": 1211,
+    "residence": "BAZEILLES",
+    "ville": "Reims",
+    "adresse": "12 place de l infanterie de marine 08140 BAZEILLES",
+    "type": "T1",
+    "surface": 18.0,
+    "loyer": 341.0,
+    "available": true
+  },
+  "2169": {
+    "id": 2169,
+    "residence": "CRESSONNIERE",
+    "ville": "Bordeaux",
+    "adresse": "Av. Michel Serres 47000 AGEN",
+    "type": "T1 PMR",
+    "surface": 20.0,
+    "loyer": 420.28,
+    "available": true
+  },
+  "267": {
+    "id": 267,
+    "residence": "CRESSONNIERE",
+    "ville": "Bordeaux",
+    "adresse": "Av. Michel Serres 47000 AGEN",
+    "type": "T1BIS LIT DOUBLE",
+    "surface": 30.0,
+    "loyer": 633.49,
+    "available": true
+  },
+  "2147": {
+    "id": 2147,
+    "residence": "CRESSONNIERE",
+    "ville": "Bordeaux",
+    "adresse": "Av. Michel Serres 47000 AGEN",
+    "type": "T1",
+    "surface": 18.0,
+    "loyer": 420.28,
+    "available": true
+  },
+  "1021": {
+    "id": 1021,
+    "residence": "Cité Jules Mousseron",
+    "ville": "Lille",
+    "adresse": "Rue du Chemin Vert 59300 AULNOY-LES-VALENCIENNES",
+    "type": "Chambre confort 10,8",
+    "surface": 10.8,
+    "loyer": 272.45,
+    "available": true
+  },
+  "506": {
+    "id": 506,
+    "residence": "LE VELUM",
+    "ville": "Bordeaux",
+    "adresse": "Avenue du Commandant CLERE 40000 MONT-DE-MARSAN",
+    "type": "T1",
+    "surface": 19.0,
+    "loyer": 403.91,
+    "available": true
+  },
+  "516": {
+    "id": 516,
+    "residence": "LE VELUM",
+    "ville": "Bordeaux",
+    "adresse": "Avenue du Commandant CLERE 40000 MONT-DE-MARSAN",
+    "type": "T1BIS PMR",
+    "surface": 29.0,
+    "loyer": 493.2,
+    "available": true
+  },
+  "522": {
+    "id": 522,
+    "residence": "LE VELUM",
+    "ville": "Bordeaux",
+    "adresse": "Avenue du Commandant CLERE 40000 MONT-DE-MARSAN",
+    "type": "T1BIS",
+    "surface": 29.0,
+    "loyer": 246.61,
+    "available": true
+  },
+  "2608": {
+    "id": 2608,
+    "residence": "BOSQUET",
+    "ville": "Bordeaux",
+    "adresse": "269 place de la caserne Bosquet 40000 MONT-DE-MARSAN",
+    "type": "T1",
+    "surface": 18.0,
+    "loyer": 399.92,
+    "available": true
+  }
+}
