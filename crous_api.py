@@ -1,17 +1,48 @@
+import time
+
 import requests
 
 
 URL = "https://trouverunlogement.lescrous.fr/api/fr/search/47"
 
 
-def rechercher_logements(location):
+def rechercher_logements(location, max_pages=60, timeout_global=90):
+    """
+    max_pages : nombre maximum de pages récupérées pour une zone.
+    timeout_global : durée maximale (en secondes) passée sur une zone
+                      avant d'arrêter la pagination, même si l'API
+                      indique qu'il reste des résultats.
+
+    Ces deux garde-fous existent car certaines zones (ex : régions
+    entières comme l'Ile-de-France) peuvent contenir des milliers de
+    résultats. Sans limite, la pagination peut prendre plusieurs
+    dizaines de minutes et bloquer tout le cycle de vérification.
+    Si la limite est atteinte, on retourne ce qui a déjà été récupéré
+    au lieu de tout perdre.
+    """
 
     logements = []
 
     page = 1
     page_size = 24
 
+    debut = time.monotonic()
+
     while True:
+
+        if page > max_pages:
+            print(
+                f"⚠️ Limite de {max_pages} pages atteinte pour cette "
+                f"zone : arrêt anticipé ({len(logements)} logement(s) récupéré(s))."
+            )
+            break
+
+        if time.monotonic() - debut > timeout_global:
+            print(
+                f"⚠️ Timeout de {timeout_global}s atteint pour cette "
+                f"zone : arrêt anticipé ({len(logements)} logement(s) récupéré(s))."
+            )
+            break
 
         payload = {
             "idTool": 47,

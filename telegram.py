@@ -1,16 +1,48 @@
+import json
 import os
 
 import requests
 from dotenv import load_dotenv
-import json
+
+from abonnes import charger_abonnes
 
 load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
-CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+# Chat_id de l'administrateur (toi) : reçoit toujours les alertes,
+# même sans être dans la liste des abonnés payants.
+ADMIN_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+
+def envoyer_message_simple(chat_id, texte, boutons=None):
+    """
+    Envoie un message texte simple à un chat_id donné.
+    `boutons` est une liste optionnelle de dicts {"text": ..., "url": ...}.
+    """
+
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+    data = {
+        "chat_id": chat_id,
+        "text": texte,
+        "disable_web_page_preview": True
+    }
+
+    if boutons:
+        data["reply_markup"] = json.dumps({
+            "inline_keyboard": [[b] for b in boutons]
+        })
+
+    response = requests.post(url, data=data, timeout=20)
+    response.raise_for_status()
 
 
 def envoyer_telegram(logement):
+    """
+    Envoie l'alerte de disponibilité à tous les abonnés actifs,
+    plus à l'administrateur (toujours, même hors liste).
+    """
 
     logement_id = logement["id"]
 
@@ -31,25 +63,34 @@ def envoyer_telegram(logement):
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-    response = requests.post(
-        url,
-        data={
-            "chat_id": CHAT_ID,
-            "text": message,
-            "disable_web_page_preview": True,
+    destinataires = {a["chat_id"] for a in charger_abonnes()}
 
-            "reply_markup": json.dumps({
-                "inline_keyboard": [
-                    [
-                        {
-                            "text": "🏠 Ouvrir le logement",
-                            "url": lien
-                        }
-                    ]
-                ]
-            })
-        },
-        timeout=20
-    )
+    if ADMIN_CHAT_ID:
+        destinataires.add(int(ADMIN_CHAT_ID))
 
-    response.raise_for_status()
+    for chat_id in destinataires:
+
+        try:
+            response = requests.post(
+                url,
+                data={
+                    "chat_id": chat_id,
+                    "text": message,
+                    "disable_web_page_preview": True,
+                    "reply_markup": json.dumps({
+                        "inline_keyboard": [
+                            [
+                                {
+                                    "text": "🏠 Ouvrir le logement",
+                                    "url": lien
+                                }
+                            ]
+                        ]
+                    })
+                },
+                timeout=20
+            )
+            response.raise_for_status()
+
+        except Exception as erreur:
+            print(f"❌ Échec d'envoi à {chat_id} : {erreur}")

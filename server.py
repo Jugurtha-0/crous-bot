@@ -4,13 +4,17 @@ import time
 from datetime import datetime
 
 import requests
-from flask import Flask
+from flask import Flask, request
 
 from zone import ZONES
 from crous_api import rechercher_logements
 from etat_logements import charger_etats, sauvegarder_etats
 from detecteur import detecter_changements
-from telegram import envoyer_telegram
+from telegram import envoyer_telegram, envoyer_message_simple
+from abonnes import est_abonne
+
+
+CONTACT_ADMIN = "@JIGO_CH"
 
 
 INTERVALLE = 3 * 60          # vérification CROUS toutes les 3 minutes
@@ -109,6 +113,49 @@ def health():
         else "pas encore lancée"
     )
     return f"Bot CROUS actif ✅ — dernière vérification : {statut}", 200
+
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    """
+    Reçoit les messages envoyés au bot par les utilisateurs Telegram.
+    Ne gère que /start pour l'instant : accueil + explication du
+    fonctionnement de la liste blanche manuelle.
+    """
+
+    update = request.get_json(silent=True) or {}
+    message = update.get("message", {})
+    texte = message.get("text", "")
+    chat_id = message.get("chat", {}).get("id")
+
+    if not chat_id:
+        return "ok", 200
+
+    if texte.startswith("/start"):
+
+        if est_abonne(chat_id):
+            reponse = (
+                "✅ Ton accès est actif !\n\n"
+                "Tu recevras une alerte dès qu'un logement CROUS "
+                "se libère, partout en France."
+            )
+        else:
+            reponse = (
+                "👋 Bienvenue sur CROUS Notif !\n\n"
+                "Ce bot t'alerte instantanément dès qu'un logement "
+                "CROUS redevient disponible, partout en France.\n\n"
+                "💳 Accès : 10€/mois\n\n"
+                f"Pour activer ton accès, contacte {CONTACT_ADMIN} "
+                "avec ton identifiant ci-dessous :\n\n"
+                f"🆔 Ton identifiant : {chat_id}"
+            )
+
+        try:
+            envoyer_message_simple(chat_id, reponse)
+        except Exception as erreur:
+            print(f"⚠️ Erreur réponse /start : {erreur}")
+
+    return "ok", 200
 
 
 if __name__ == "__main__":
