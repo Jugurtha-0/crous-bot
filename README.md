@@ -1,9 +1,28 @@
 # Bot de surveillance des logements CROUS
 
 Surveille toute la France (13 régions métropolitaines + Corse + DOM-TOM) et
-envoie une alerte Telegram dès qu'un logement CROUS redevient disponible.
+poste une alerte dans un canal Telegram privé dès qu'un logement CROUS
+redevient disponible.
 
-## Hébergement gratuit (sans carte bancaire), 24h/24 — méthode recommandée : Render
+## Monétisation : Tribute + canal privé
+
+L'accès au canal d'alertes est payant (10€/mois), géré automatiquement par
+**Tribute** (bot Telegram) :
+
+- Tribute gère les paiements, les renouvellements automatiques, et
+  ajoute/retire les membres du canal selon leur abonnement.
+- Le bot (`server.py`) n'a plus besoin de connaître la liste des abonnés :
+  il poste simplement les alertes dans le canal, Tribute s'occupe du reste.
+- `/start` en message privé au bot renvoie le lien de paiement Tribute.
+
+### Variables d'environnement nécessaires
+
+- `TELEGRAM_TOKEN` — token du bot (@BotFather)
+- `TELEGRAM_CHANNEL_ID` — identifiant du canal privé (ex : `-1004342850854`)
+- `LIEN_PAIEMENT_TRIBUTE` — le lien d'abonnement généré par @Tribute
+  (ex : `https://t.me/tribute/app?startapp=xxxxx`)
+
+## Hébergement gratuit (sans carte bancaire), 24h/24 — Render
 
 Sur le plan gratuit de Render, seul le type **Web Service** est disponible
 sans carte bancaire (les *background workers* et *cron jobs* sont payants

@@ -4,21 +4,20 @@ import os
 import requests
 from dotenv import load_dotenv
 
-from abonnes import charger_abonnes
-
 load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-# Chat_id de l'administrateur (toi) : reçoit toujours les alertes,
-# même sans être dans la liste des abonnés payants.
-ADMIN_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+# Identifiant du canal privé où sont postées les alertes.
+# L'accès à ce canal est géré automatiquement par Tribute
+# (abonnement payant, ajout/retrait des membres, renouvellement).
+CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
 
 
 def envoyer_message_simple(chat_id, texte, boutons=None):
     """
-    Envoie un message texte simple à un chat_id donné.
-    `boutons` est une liste optionnelle de dicts {"text": ..., "url": ...}.
+    Envoie un message texte simple à un chat_id donné
+    (utilisé par exemple pour répondre à /start en privé).
     """
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -40,8 +39,10 @@ def envoyer_message_simple(chat_id, texte, boutons=None):
 
 def envoyer_telegram(logement):
     """
-    Envoie l'alerte de disponibilité à tous les abonnés actifs,
-    plus à l'administrateur (toujours, même hors liste).
+    Poste l'alerte de disponibilité dans le canal privé.
+    Tribute gère qui a le droit d'être membre de ce canal (donc
+    qui reçoit réellement le message) — le bot n'a plus besoin de
+    connaître la liste des abonnés.
     """
 
     logement_id = logement["id"]
@@ -61,36 +62,33 @@ def envoyer_telegram(logement):
         "⚡ Disponible maintenant"
     )
 
+    if not CHANNEL_ID:
+        print("❌ TELEGRAM_CHANNEL_ID absent : impossible de poster l'alerte.")
+        return
+
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-    destinataires = {a["chat_id"] for a in charger_abonnes()}
-
-    if ADMIN_CHAT_ID:
-        destinataires.add(int(ADMIN_CHAT_ID))
-
-    for chat_id in destinataires:
-
-        try:
-            response = requests.post(
-                url,
-                data={
-                    "chat_id": chat_id,
-                    "text": message,
-                    "disable_web_page_preview": True,
-                    "reply_markup": json.dumps({
-                        "inline_keyboard": [
-                            [
-                                {
-                                    "text": "🏠 Ouvrir le logement",
-                                    "url": lien
-                                }
-                            ]
+    try:
+        response = requests.post(
+            url,
+            data={
+                "chat_id": CHANNEL_ID,
+                "text": message,
+                "disable_web_page_preview": True,
+                "reply_markup": json.dumps({
+                    "inline_keyboard": [
+                        [
+                            {
+                                "text": "🏠 Ouvrir le logement",
+                                "url": lien
+                            }
                         ]
-                    })
-                },
-                timeout=20
-            )
-            response.raise_for_status()
+                    ]
+                })
+            },
+            timeout=20
+        )
+        response.raise_for_status()
 
-        except Exception as erreur:
-            print(f"❌ Échec d'envoi à {chat_id} : {erreur}")
+    except Exception as erreur:
+        print(f"❌ Échec de publication dans le canal : {erreur}")
