@@ -208,6 +208,18 @@ def privacy():
 </body></html>""", 200
 
 
+@app.route("/refund")
+def refund():
+    return """<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><title>Politique de remboursement — CROUS Notif</title></head>
+<body style="font-family:-apple-system,sans-serif;max-width:640px;margin:40px auto;padding:0 20px;line-height:1.6;">
+<h1>Politique de remboursement</h1>
+<p>Si le service ne fonctionne pas comme annoncé au cours des 7 premiers jours suivant ton premier paiement (par exemple : aucune alerte reçue alors que des logements étaient disponibles dans les zones couvertes), tu peux demander un remboursement intégral en nous contactant via la page d'accueil.</p>
+<p>Passé ce délai de 7 jours, l'abonnement peut être résilié à tout moment pour arrêter les prélèvements futurs, sans remboursement du mois déjà entamé.</p>
+<p>Les demandes de remboursement sont traitées sous 5 jours ouvrés.</p>
+</body></html>""", 200
+
+
 @app.route("/status")
 def health():
     statut = (
