@@ -208,6 +208,48 @@ def privacy():
 </body></html>""", 200
 
 
+@app.route("/pricing")
+def pricing():
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarifs — CROUS Notif</title>
+<style>
+  body {{ font-family: -apple-system, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1a1a2e; }}
+  .carte {{ border: 1px solid #ddd; border-radius: 12px; padding: 24px; margin-top: 20px; }}
+  .prix {{ font-size: 32px; font-weight: bold; color: #185FA5; }}
+  a.bouton {{ display: inline-block; background: #185FA5; color: white; text-decoration: none; padding: 14px 28px; border-radius: 8px; margin-top: 16px; }}
+  footer {{ margin-top: 60px; font-size: 13px; color: #888; }}
+  footer a {{ color: #888; }}
+</style>
+</head>
+<body>
+
+<h1>Tarifs — CROUS Notif</h1>
+<p>Un seul abonnement, tout inclus : toute la France, alertes instantanées.</p>
+
+<div class="carte">
+  <div class="prix">10€ <span style="font-size:16px;font-weight:normal;">/ mois</span></div>
+  <ul>
+    <li>18 zones surveillées (13 régions métropolitaines, Corse, DOM-TOM)</li>
+    <li>Vérification toutes les 3 minutes</li>
+    <li>Alerte instantanée dès qu'un logement se libère</li>
+    <li>Résiliable à tout moment</li>
+  </ul>
+  <a class="bouton" href="/">S'abonner maintenant</a>
+</div>
+
+<footer>
+  <a href="/terms">Conditions d'utilisation</a> · <a href="/privacy">Politique de confidentialité</a> · <a href="/refund">Remboursement</a><br>
+  Contact : {CONTACT_EMAIL}
+</footer>
+
+</body>
+</html>""", 200
+
+
 @app.route("/refund")
 def refund():
     return """<!DOCTYPE html>
