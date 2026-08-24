@@ -81,6 +81,8 @@ def effectuer_verification():
                     print("⚠️ Telegram NON envoyé (voir erreur ci-dessus)")
             except Exception as erreur:
                 print(f"❌ Erreur Telegram : {erreur}")
+
+            time.sleep(1.2)  # évite le 429 "Too Many Requests" de Telegram sur les envois en rafale
     else:
         print("\n✅ Aucune nouvelle disponibilité.")
 
