@@ -323,11 +323,27 @@ def paddle_webhook():
     corps_brut = request.get_data()
     signature_header = request.headers.get("Paddle-Signature", "")
 
+    print(f"🔍 Paddle-Signature reçu : {signature_header!r}")
+    print(f"🔍 PADDLE_WEBHOOK_SECRET configuré : {'oui (' + str(len(PADDLE_WEBHOOK_SECRET)) + ' caractères)' if PADDLE_WEBHOOK_SECRET else 'NON — vide !'}")
+
+    if not signature_header:
+        print("❌ Aucun header Paddle-Signature reçu — requête pas envoyée par Paddle, ou proxy qui le filtre.")
+        return "missing signature header", 400
+
     if PADDLE_WEBHOOK_SECRET:
         try:
-            parties = dict(p.split("=", 1) for p in signature_header.split(";"))
+            parties = {}
+            for p in signature_header.split(";"):
+                if "=" in p:
+                    cle, valeur = p.split("=", 1)
+                    parties[cle.strip()] = valeur.strip()
+
             ts = parties.get("ts", "")
             h1 = parties.get("h1", "")
+
+            if not ts or not h1:
+                print(f"❌ ts ou h1 manquant après parsing : parties={parties}")
+                return "malformed signature", 400
 
             payload_signe = f"{ts}:{corps_brut.decode('utf-8')}"
             signature_calculee = hmac_lib.new(
@@ -337,12 +353,16 @@ def paddle_webhook():
             ).hexdigest()
 
             if not hmac_lib.compare_digest(signature_calculee, h1):
-                print("❌ Signature Paddle invalide, webhook ignoré.")
+                print(f"❌ Signature invalide. Reçu (h1)={h1} | Calculée={signature_calculee}")
                 return "invalid signature", 400
+
+            print("✅ Signature Paddle valide.")
 
         except Exception as erreur:
             print(f"❌ Erreur vérification signature Paddle : {erreur}")
             return "signature error", 400
+    else:
+        print("⚠️ PADDLE_WEBHOOK_SECRET vide : signature non vérifiée (à corriger avant la prod !).")
 
     event = request.get_json(silent=True) or {}
     event_type = event.get("event_type", "")
