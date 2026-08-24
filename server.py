@@ -74,8 +74,11 @@ def effectuer_verification():
         print(f"\n🚨 {len(alertes)} nouvelle(s) disponibilité(s) !")
         for logement in alertes:
             try:
-                envoyer_telegram(logement)
-                print("📱 Telegram envoyé")
+                succes = envoyer_telegram(logement)
+                if succes:
+                    print("📱 Telegram envoyé")
+                else:
+                    print("⚠️ Telegram NON envoyé (voir erreur ci-dessus)")
             except Exception as erreur:
                 print(f"❌ Erreur Telegram : {erreur}")
     else:

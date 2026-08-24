@@ -64,7 +64,7 @@ def envoyer_telegram(logement):
 
     if not CHANNEL_ID:
         print("❌ TELEGRAM_CHANNEL_ID absent : impossible de poster l'alerte.")
-        return
+        return False
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
@@ -89,6 +89,8 @@ def envoyer_telegram(logement):
             timeout=20
         )
         response.raise_for_status()
+        return True
 
     except Exception as erreur:
         print(f"❌ Échec de publication dans le canal : {erreur}")
+        return False
